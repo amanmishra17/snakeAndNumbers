@@ -3,13 +3,13 @@ var obstacles = [];
 
 function startGame() {
      myGameArea.start();
-    mySnake = new component(20,90,"yellow",125,430);    
+    mySnake = new component(30,90,"yellow",125,430);    
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 400;
+        this.canvas.width = 500;
         this.canvas.height = 640;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -30,16 +30,17 @@ var myGameArea = {
         this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
     },
     
-    decrease : function() {
-      mySnake.height = mySnake.height - 10;
-      },
-    
     stop : function() {
         clearInterval(this.interval);
     }    
 }
 
-function component(width,height,color,x,y){
+function component(width,height,color,x,y,type){
+    this.type = type;
+  if (type == "image") {
+    this.image = new Image();
+    this.image.src = color;
+  }
     this.width=width;
     this.height=height;
     this.speedX = 0;
@@ -48,8 +49,15 @@ function component(width,height,color,x,y){
     this.y=y;
     
     this.update = function(){ctx=myGameArea.context;
-    ctx.fillStyle=color;
-    ctx.fillRect(this.x,this.y,this.width,this.height);
+    if (type == "image") {
+      ctx.drawImage(this.image, 
+        this.x, 
+        this.y,
+        this.width, this.height);
+    } else {
+      ctx.fillStyle = color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
       }
      this.newPos = function() {
          
@@ -62,8 +70,8 @@ function component(width,height,color,x,y){
              {this.x+=1;}
         
          else
-            { this.x += this.speedX;
-              this.y += this.speedY;
+            { this.x += 3*this.speedX;
+              this.y += 3*this.speedY;
             }
       }
 
@@ -86,16 +94,13 @@ function component(width,height,color,x,y){
       
      
 }
-
-     
-    
     
 function updateGameArea(){ 
     var x;
     
      for (i = 0; i < obstacles.length; i += 1) {
         if (mySnake.collision(obstacles[i])) {
-            myGameArea.decrease();
+            mySnake.height = mySnake.height - 10;
             obstacles[i].width = 0;
             obstacles[i].height = -200;
             }
@@ -107,20 +112,25 @@ function updateGameArea(){
     
      myGameArea.clear();
     myGameArea.frame += 1;
-    if (myGameArea.frame == 1 || everyinterval(200)) {
+    if (everyinterval(200)) {
         x = myGameArea.canvas.width;
-        obstacles.push(new component(20, 20, "green", x-50, 0));
-        obstacles.push(new component(20, 20, "pink", x-150, 0));
+        obstacles.push(new component(40, 40, "./img/1.png", Math.floor(Math.random()*50)+10, -10, "image"));
+        obstacles.push(new component(40, 40, "./img/2.png", Math.floor(Math.random()*400)+50, -10,"image"));
+        console.log(obstacles)
         
     }
     
-    if (myGameArea.frame == 1 || everyinterval(150)) {
+    if ( everyinterval(150)) {
         x = myGameArea.canvas.width;
-     obstacles.push(new component(20,20, "blue", x-250, 0));
-          obstacles.push(new component(20,20, "brown", x-350, 0));
+     obstacles.push(new component(40,40, "./img/3.png", Math.floor(Math.random()*250)+90, -10,"image"));
+        
+        obstacles.push(new component(40,40, "./img/4.png", Math.floor(Math.random()*450)+130, -10,"image"));
+          
     }
     for (i = 0; i < obstacles.length; i += 1) {
-        obstacles[i].y += 1;
+    
+           obstacles[i].y += 1;
+        
         obstacles[i].update();
     }
     
@@ -137,7 +147,7 @@ function updateGameArea(){
 }
 
 function everyinterval(n) {
-    if ((myGameArea.frame / n) % 1 == 0) {return true;}
+    if (myGameArea.frame % n == 0) {return true;}
     return false;
 }
 
