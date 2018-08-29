@@ -30,6 +30,9 @@ var myGameArea = {
         this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
     },
     
+    decrease : function() {
+      mySnake.height = mySnake.height - 10;
+      },
     
     stop : function() {
         clearInterval(this.interval);
@@ -92,10 +95,13 @@ function updateGameArea(){
     
      for (i = 0; i < obstacles.length; i += 1) {
         if (mySnake.collision(obstacles[i])) {
-            myGameArea.stop();
+            myGameArea.decrease();
+            obstacles[i].width = 0;
+            obstacles[i].height = -200;
             }
             
-        
+            if(mySnake.height == 0)
+            myGameArea.stop();
     }
     
     
