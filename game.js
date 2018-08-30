@@ -1,9 +1,11 @@
 var mySnake;
 var obstacles = [];
+var score;
 
 function startGame() {
      myGameArea.start();
-    mySnake = new component(30,90,"yellow",125,430);    
+    mySnake = new component(30,90,"yellow",125,430); 
+    score = new component("30px", "Consolas", "white", 250, 40, "text");
 }
 
 var myGameArea = {
@@ -15,6 +17,7 @@ var myGameArea = {
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
         this.frame = 0;
+        this.scoring=0;
         window.addEventListener('keydown', function (e) {
             myGameArea.key = e.keyCode;
             
@@ -48,13 +51,23 @@ function component(width,height,color,x,y,type){
     this.x=x;
     this.y=y;
     
-    this.update = function(){ctx=myGameArea.context;
+    this.update = function(){
+    ctx = myGameArea.context; 
     if (type == "image") {
       ctx.drawImage(this.image, 
         this.x, 
         this.y,
         this.width, this.height);
-    } else {
+    } 
+        
+        else if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        }  
+                             
+                             
+    else {
       ctx.fillStyle = color;
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
@@ -63,11 +76,12 @@ function component(width,height,color,x,y,type){
          
        
          if(this.width+this.x > myGameArea.canvas.width )
-            { this.x-=1;
-
-            }
+            { this.x-=1;}
          else if(this.x<0)
              {this.x+=1;}
+         
+         else if(this.y<0)
+             {this.y+=1;}
         
          else
             { this.x += 3*this.speedX;
@@ -103,6 +117,7 @@ function updateGameArea(){
             mySnake.height = mySnake.height - 10;
             obstacles[i].width = 0;
             obstacles[i].height = -200;
+            myGameArea.scoring+=10;
             }
             
             if(mySnake.height == 0)
@@ -128,11 +143,14 @@ function updateGameArea(){
           
     }
     for (i = 0; i < obstacles.length; i += 1) {
-    
+          if(myGameArea.frame>=0 && myGameArea.frame <=2000)
            obstacles[i].y += 1;
-        
-        obstacles[i].update();
+          if(myGameArea.frame>2000)
+           obstacles[i].y += 2;
+           obstacles[i].update();
     }
+    score.text="My Score: " + myGameArea.scoring;
+    score.update();
     
     mySnake.speedX=0;
     mySnake.speedY=0;
