@@ -2,11 +2,15 @@ var mySnake;
 var obstacles = [];
 var score;
 var food = [];
+var gameOver;
+var food_sound = new Audio("bite.wav");
+var obstacles_sound = new Audio("obs_bite.wav");
 
 function startGame() {
      myGameArea.start();
-    mySnake = new component(30,90,"./img/snake.png",125,430,"image"); 
+    mySnake = new component(40,150,"./img/s5.png",125,430,"image"); 
     score = new component("30px", "Consolas", "white", 250, 40, "text");
+    gameOver = new component("30px", "Consolas", "white", 150, 320, "text");
 }
 
 var myGameArea = {
@@ -35,6 +39,9 @@ var myGameArea = {
     },
     
     stop : function() {
+        gameOver.text="GAME OVER";
+                gameOver.update();      
+        
         clearInterval(this.interval);
     }    
 }
@@ -118,21 +125,24 @@ function updateGameArea(){
     
      for (i = 0; i < obstacles.length; i += 1) {
         if (mySnake.collision(obstacles[i])) {
-            mySnake.height = mySnake.height - 20;
-            obstacles[i].width = -5000;
-            obstacles[i].height = -5000;
-            
+            mySnake.height = mySnake.height - obstacles[i].height;
+            obstacles_sound.play();
+            obstacles[i].width = 0;
+            obstacles[i].height = -1000;
             }
             
-            if(mySnake.height <= 0)
-            myGameArea.stop();
+            if(mySnake.height <= 0){
+                mySnake.height=0;      
+                myGameArea.stop();
+            }
     }
     
     for (j = 0; j < food.length; j += 1) {
         if (mySnake.collision(food[j])) {
             mySnake.height = mySnake.height + 10;
-            food[j].width = -5000;
-            food[j].height = -5000;
+            food_sound.play();
+            food[j].width = 0;
+            food[j].height = -1000;
             myGameArea.scoring+=10;
             }
     }
@@ -142,16 +152,16 @@ function updateGameArea(){
     myGameArea.frame += 1;
     if (everyinterval(200)) {
     
-        obstacles.push(new component(40, 40, "./img/1.png", Math.floor(Math.random()*50)+10, -10, "image"));
-        obstacles.push(new component(40, 40, "./img/2.png", Math.floor(Math.random()*100)+90, -10,"image"));
+        obstacles.push(new component(40, 40, "./img/3.png", Math.floor(Math.random()*50)+10, -10, "image"));
+        obstacles.push(new component(28, 28, "./img/2.png", Math.floor(Math.random()*100)+90, -10,"image"));
         
     }
     
     if ( everyinterval(150)) {
         
-     obstacles.push(new component(40,40, "./img/3.png", Math.floor(Math.random()*100)+200, -10,"image"));
+     obstacles.push(new component(33,33, "./img/4.png", Math.floor(Math.random()*100)+200, -10,"image"));
         
-        obstacles.push(new component(40,40, "./img/4.png", Math.floor(Math.random()*200)+290, -10,"image"));
+        obstacles.push(new component(20,20, "./img/1.png", Math.floor(Math.random()*200)+290, -10,"image"));
           
     }
     
@@ -161,24 +171,37 @@ function updateGameArea(){
         food.push(new component(40, 40, "./img/frog.png", Math.floor(Math.random()*125)+180, -10, "image"));
         
     }
-    
     if ( everyinterval(500)) {
         
      food.push(new component(40,40, "./img/grasshopper.png", Math.floor(Math.random()*250)+300, -10,"image"));
         
           
     }
+    
+    if(myGameArea.frame>2000)
+        {
+            if (everyinterval(170)) {
+    
+        obstacles.push(new component(40, 40, "./img/4.png", Math.floor(Math.random()*50)+10, -10, "image"));
+        obstacles.push(new component(28, 28, "./img/2.png", Math.floor(Math.random()*100)+90, -10,"image"));
+        
+    }
+    
+        
+            
+        }
+    
     for (i = 0; i < obstacles.length; i += 1) {
-          if(myGameArea.frame>=0 && myGameArea.frame <= 4000)
+          if(myGameArea.frame>=0 && myGameArea.frame <= 2000)
            obstacles[i].y += 1;
-          if(myGameArea.frame>4000)
+          if(myGameArea.frame>2000)
               obstacles[i].y += 2;
            obstacles[i].update();
     }
     for (j = 0; j < food.length; j += 1) {
-          if(myGameArea.frame>=0 && myGameArea.frame <=4000)
+          if(myGameArea.frame>=0 && myGameArea.frame <=2000)
            food[j].y += 1.5;
-          if(myGameArea.frame>=4000)
+          if(myGameArea.frame>=2000)
            food[j].y += 2.5;
            food[j].update();
     }
