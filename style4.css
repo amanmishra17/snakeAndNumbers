@@ -1,8 +1,29 @@
 canvas{
     position: absolute;
-    left: 450px;
-    border: 1px solid black;
+    left: 460px;
+    
+    border: 1.5px solid white;
     background-color: black;
 }
+.btnplace
+{
+    padding-left: 50px;
+    padding-top: 200px;
+}
 
+.btn{
+    width :150px;
+    height : 40px;
+    padding : 10px;
+    border-radius: 50px;
+    border:3px solid black;
+}
 
+#myimage{
+    
+    position: absolute;
+    top: 250px;
+    left: 550px;
+    display: none;
+    
+}
